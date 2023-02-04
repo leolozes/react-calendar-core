@@ -68,7 +68,7 @@ function Day(props: Props) {
   if (renderDay) {
     return <>{renderDay(date, status, events)}</>
   }
-  
+
   return (
     <div {...events}>
       {new Date(date).getDate()}

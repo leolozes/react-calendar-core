@@ -68,7 +68,7 @@ function Month(props: Props) {
   }
 
   return (
-    <div id={`${startMonth.getFullYear()}-${startMonth.getMonth() + 1}`}>
+    <>
       {
         props.renderMonthHeader
         ? props.renderMonthHeader(startMonth.getMonth(), startMonth.getFullYear())
@@ -92,7 +92,7 @@ function Month(props: Props) {
             )}
         </tbody>
       </table>
-    </div>
+    </>
   );
 }
 

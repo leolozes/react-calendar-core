@@ -28,7 +28,7 @@ function Calendar(props: Props) {
 
   React.useEffect(() => {
     state.setStart(props.startDate);
-    state.setEnd(addMonths(new Date(props.startDate), props.numberOfMonths).getTime());
+    state.setEnd(addMonths(new Date(props.startDate), props.numberOfMonths - 1).getTime());
 
     if (props.selectedDates) {
       state.setSelectedDates(props.selectedDates);

@@ -38,7 +38,7 @@ function Months(props: Props) {
           );
           return props.renderCalendarContainer
             ? props.renderCalendarContainer(startDate.getMonth(), startDate.getFullYear(), month)
-            : {month}
+            : month
         })
     }
     </>
