@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { addDays, addMonths, differenceInMonths, isAfter, isBefore, isSameDay, startOfDay } from "date-fns";
 import { endOfMonth, startOfMonth } from "date-fns/esm";
 
@@ -53,8 +53,12 @@ export const useCalendarStore = create<CalendarState>()(
     selectedTo: undefined,
     start: today,
     clearSelectedDates: () => set((state) => {
-      log('clearSelectedDates')
-      return { ...state, selectedDates: new Set<number>() };
+      return {
+        ...state,
+        selectedDates: new Set<number>(),
+        selectedFrom: undefined,
+        selectedTo: undefined
+      };
     }),
     onHover: (date: number) => set((state) => {
       const hoveredDate = startOfDay(date);
@@ -164,19 +168,19 @@ export const useCalendarStore = create<CalendarState>()(
     }),
     setSelectedDates: (dates: number[]) => set((state) => {
       log('setDates', dates);
-      const newDates = new Set<number>(getSelectedDatesInRange(state.start, state.end, dates));
+      const newDates = getSelectedDatesInRange(state.start, state.end, dates);
       if (
-        newDates.size != state.selectedDates.size ||
-        !Array.from(newDates)
+        newDates.length != state.selectedDates.size ||
+        !newDates
           .map((d) => state.selectedDates.has(d))
           .reduce((p, c) => p && c, true)
       ) {
         return {
           ...state,
-          selectedDates: newDates,
+          selectedDates: new Set<number>(newDates),
           hovered: new Set<number>(),
-          selectedFrom: dates ? dates[0] : undefined,
-          selectedTo: dates ? dates[dates.length - 1] : undefined
+          selectedFrom: newDates ? newDates[0] : undefined,
+          selectedTo: newDates ? newDates[newDates.length - 1] : undefined
         };
       }
       return state;
@@ -224,7 +228,7 @@ function filterDays(state: CalendarState, numberOfMonths: number, startDate: num
   const newNumberOfMonths = differenceInMonths(startOfMonth(newEndDate), startOfMonth(newStartDate)) + 1;
   dates = new Set<number>(Array.from(state.selectedDates).filter((date) => isBefore(date, newStartDate) || isAfter(date, newEndDate)));
 
-  console.log('filterDays', newStartDate, newEndDate, dates, state.selectedDates)
+  log('filterDays', newStartDate, newEndDate, dates, state.selectedDates)
   return {
     ...state,
     selectedDates: dates,
@@ -254,7 +258,7 @@ const getSelectedDatesInRange = (startDate: number, endDate: number, selectedDat
   return datesInRange;
 }
 
-const log = (key: string, text?: any) => {
+const log = (key: string, ...text: any[]) => {
   //console.log(key, text)
 }
 

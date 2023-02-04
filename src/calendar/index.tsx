@@ -16,10 +16,6 @@ function Calendar(props: types.CalendarProps) {
     state.setStart(props.startDate);
     state.setEnd(endDate);
     state.setAllowPreviousNavigation(props.allowPreviousNavigation ?? true);
-
-    console.log('start', new Date(props.startDate));
-    console.log('end', new Date(endDate));
-
     if (props.selectedDates) {
       state.setSelectedDates(props.selectedDates);
     } else {

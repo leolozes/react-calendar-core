@@ -30,6 +30,7 @@ function Months(props: MonthsProps) {
           );
           return CalendarContainerComponent
             ? <CalendarContainerComponent
+                key={`M${i}`}
                 month={startDate.getMonth()}
                 year={startDate.getFullYear()}
                 children={month}

@@ -38,7 +38,6 @@ export default function Demo (props: Props) {
   }
 
   const onChange = (dates: number[]): void => {
-    console.log('dates', dates);
     setDates(dates);
   }
 
@@ -53,29 +52,39 @@ export default function Demo (props: Props) {
           startDate={startDate}
           weekStartsOn={types.WeekStartsOn.Monday}
           onChange={onChange}
-          CalendarContainerComponent={(containerProps: types.CustomCalendarContainerProps) =>
-            <CalendarContainer {...containerProps} />
+          CalendarContainerComponent={
+            props.styled
+              ? (containerProps: types.CustomCalendarContainerProps) => <CalendarContainer {...containerProps} />
+              : undefined
           }
-          DayComponent={(dayProps: types.CustomDayProps) =>
-            <CalendarDay {...dayProps} />
+          DayComponent={
+            props.styled
+              ? (dayProps: types.CustomDayProps) => <CalendarDay {...dayProps} />
+              : undefined
           }
-          MonthHeaderComponent={(montHeaderProps: types.CustomMonthHeaderProps) =>
-            <CalendarMonthHeader
-              {...montHeaderProps}
-              allowPreviousNavigation={props.allowPreviousNavigation}
-              locale={locale}
-              startDate={startDate}
-              setStartDate={setStartDate}
-            />}
-          WeekDayComponent={(weekDayProps: types.CustomWeekDayProps) =>
-            <CalendarWeekDay {...weekDayProps} locale={locale} />
+          MonthHeaderComponent={
+            props.styled
+              ? (montHeaderProps: types.CustomMonthHeaderProps) =>
+                  <CalendarMonthHeader
+                    {...montHeaderProps}
+                    allowPreviousNavigation={props.allowPreviousNavigation}
+                    locale={locale}
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                  />
+              : undefined
+          }
+          WeekDayComponent={
+            props.styled
+              ? (weekDayProps: types.CustomWeekDayProps) => <CalendarWeekDay {...weekDayProps} locale={locale} />
+              : undefined
           }
         />
       </div>
       <div className="bg-slate-600 m-2 p-2 text-slate-400">
         Selected dates:
         <div className="break-all">
-          {dates.map(date => <>{new Date(date).toLocaleDateString(locale, { day: 'numeric', month: 'numeric' })},&nbsp;</>)}
+          {dates.map(date => <React.Fragment key={date}>{new Date(date).toLocaleDateString(locale, { day: 'numeric', month: 'numeric' })},&nbsp;</React.Fragment>)}
         </div>
       </div>
     </div>
