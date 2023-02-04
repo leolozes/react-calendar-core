@@ -2,23 +2,14 @@ import { useEffect, useRef } from "react";
 
 import { addDays, differenceInWeeks, endOfMonth, endOfWeek, startOfMonth, startOfWeek, differenceInDays } from "date-fns";
 
-import { Events, Status, WeekStartsOn } from "./constants";
+import { MonthProps } from "./types";
 
 import { isFirstSelectedDay, useCalendarStore } from "./state";
 
 import Day from "./Day";
 
-export interface Props {
-  locale: string;
-  startDate: number;
-  weekStartsOn: WeekStartsOn;
-  renderDay?: (day: number, status: Status, events: Events) => JSX.Element;
-  renderMonthHeader?: (month: number, year: number) => JSX.Element;
-  renderWeekDay?: (weekDay: number) => JSX.Element;
-}
-
-function Month(props: Props) {
-  const { renderDay, startDate } = props;
+function Month(props: MonthProps) {
+  const { startDate, MonthHeaderComponent, WeekDayComponent } = props;
   const scrollRef = useRef<HTMLTableDataCellElement>(null);
   const state = useCalendarStore();
 
@@ -35,7 +26,6 @@ function Month(props: Props) {
   const startMonth = startOfMonth(startDate);
   const startWeek = startOfWeek(startMonth,  {weekStartsOn: props.weekStartsOn});
   const startWeekDay = differenceInDays(startMonth, startWeek);
-
   const endMonth = endOfMonth(startDate);
   const endDate = endMonth.getTime();
   const endWeek = endOfWeek(endMonth);
@@ -49,8 +39,8 @@ function Month(props: Props) {
     return Array(7)
       .fill(1)
       .map((_v, i) =>
-        (props.renderWeekDay)
-          ? props.renderWeekDay(addDays(date, i).getTime())
+        (WeekDayComponent)
+          ? <WeekDayComponent date={addDays(date, i).getTime()} />
           : <>{addDays(date, i).toLocaleDateString(props.locale, { weekday: 'short' })}</>
       );
   })();
@@ -62,7 +52,7 @@ function Month(props: Props) {
     const isSelected = isFirstSelectedDay(state, dayDate);
     return (
       <td key={`D${day + 1}`} ref={isSelected ? scrollRef : undefined} >
-        {!empty && <Day date={dayDate} renderDay={renderDay} />}
+        {!empty && <Day {...props} date={dayDate} />}
       </td>
     );
   }
@@ -70,8 +60,13 @@ function Month(props: Props) {
   return (
     <>
       {
-        props.renderMonthHeader
-        ? props.renderMonthHeader(startMonth.getMonth(), startMonth.getFullYear())
+        MonthHeaderComponent
+        ? <MonthHeaderComponent
+            month={startMonth.getMonth()}
+            year={startMonth.getFullYear()}
+            isFirst={new Date(state.start).getMonth() === startMonth.getMonth()}
+            isLast={new Date(state.end).getMonth() === startMonth.getMonth()}
+          />
         : <div>
             {`${startMonth.toLocaleString(props.locale, { month: 'long' })} ${startMonth.getFullYear()}`}
           </div>

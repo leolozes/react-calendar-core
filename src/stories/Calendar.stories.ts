@@ -21,6 +21,7 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/7.0/react/writing-stories/args
 export const Primary: Story = {
   args: {
+    allowPreviousNavigation: true,
     numberOfMonths: 1,
     orientation: "column",
     styled: true,
@@ -30,6 +31,7 @@ export const Primary: Story = {
 
 export const Secondary: Story = {
   args: {
+    allowPreviousNavigation: false,
     numberOfMonths: 2,
     orientation: "column",
     styled: true,

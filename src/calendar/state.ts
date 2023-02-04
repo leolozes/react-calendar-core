@@ -14,6 +14,7 @@ export enum CalendarMode {
 }
 
 interface CalendarState {
+  allowPreviousNavigation: boolean,
   disabled: Set<number>;
   dragAction: DragAction;
   end: number;
@@ -29,6 +30,7 @@ interface CalendarState {
   onMouseDown: (date: number) => void;
   onMouseEnter: (date: number) => void;
   onMouseUp: () => void;
+  setAllowPreviousNavigation: (allow: boolean) => void;
   setDisabled: (dates: number[]) => void;
   setEnd: (date: number) => void;
   setSelectedDates: (dates: number[]) => void;
@@ -39,6 +41,7 @@ const today = new Date().getTime();
 
 export const useCalendarStore = create<CalendarState>()(
   (set) => ({
+    allowPreviousNavigation: true,
     disabled: new Set<number>(),
     dragAction: DragAction.NONE,
     end: endOfMonth(today).getTime(),
@@ -50,7 +53,7 @@ export const useCalendarStore = create<CalendarState>()(
     selectedTo: undefined,
     start: today,
     clearSelectedDates: () => set((state) => {
-      console.log('clearSelectedDates')
+      log('clearSelectedDates')
       return { ...state, selectedDates: new Set<number>() };
     }),
     onHover: (date: number) => set((state) => {
@@ -76,7 +79,7 @@ export const useCalendarStore = create<CalendarState>()(
     }),
     onMouseDown: (date: number) => set((state) => {
       const day = startOfDay(date);
-      console.log('onMouseDown', day)
+      log('onMouseDown', day)
       if (state.selectedFrom) {
         const selectionFrom = startOfDay(state.selectedFrom);
         if (state.selectedTo) {
@@ -114,7 +117,7 @@ export const useCalendarStore = create<CalendarState>()(
       }
     }),
     onMouseEnter: (date: number) => set((state) => {
-      console.log('onMouseEnter', state.dragAction)
+      log('onMouseEnter', state.dragAction)
       switch (state.dragAction) {
         case DragAction.ADD:
           return selectDay(state, date);
@@ -126,11 +129,14 @@ export const useCalendarStore = create<CalendarState>()(
       return state;
     }),
     onMouseUp: () => set((state) => {
-      console.log('onMouseUp', state.dragAction)
+      log('onMouseUp', state.dragAction)
       return { ...state, dragAction: DragAction.NONE };
     }),
+    setAllowPreviousNavigation: (allow: boolean) => set((state) => {
+      return { ...state, allowPreviousNavigation: allow };
+    }),
     setDisabled: (dates: number[]) => set((state) => {
-      console.log('setDisabled', dates);
+      log('setDisabled', dates);
       const newDates = new Set<number>(dates);
       if (
         newDates.size != state.selectedDates.size ||
@@ -143,12 +149,13 @@ export const useCalendarStore = create<CalendarState>()(
       return state;
     }),
     setEnd: (date: number) => set((state) => {
-      console.log('setEnd', date);
+      log('setEnd', date);
       let endDate = startOfDay(date);
-      // Anterior a hoy no vale
-      const today = startOfDay(new Date());
-      if (isBefore(endDate, today)) {
-        endDate = today;
+      if (!state.allowPreviousNavigation) {
+        const today = startOfDay(new Date());
+        if (isBefore(endDate, today)) {
+          endDate = today;
+        }
       }
       if (!state.end || !isSameDay(endDate, state.end)) {
         return filterDays(state, state.numberOfMonths, state.start, endDate.getTime());
@@ -156,8 +163,8 @@ export const useCalendarStore = create<CalendarState>()(
       return state;
     }),
     setSelectedDates: (dates: number[]) => set((state) => {
-      console.log('setDates', dates);
-      const newDates = new Set<number>(dates);
+      log('setDates', dates);
+      const newDates = new Set<number>(getSelectedDatesInRange(state.start, state.end, dates));
       if (
         newDates.size != state.selectedDates.size ||
         !Array.from(newDates)
@@ -175,13 +182,16 @@ export const useCalendarStore = create<CalendarState>()(
       return state;
     }),
     setStart: (date: number) => set((state) => {
-      console.log('setStart', date);
+      log('setStart', date);
       let startDate = startOfDay(date);
-      // Anterior a hoy no vale
-      const today = startOfDay(new Date());
-      if (isBefore(startDate, today)) {
-        startDate = today;
+
+      if (!state.allowPreviousNavigation) {
+        const today = startOfDay(new Date());
+        if (isBefore(startDate, today)) {
+          startDate = today;
+        }
       }
+
       if (!state.start || !isSameDay(startDate, state.start)) {
         return filterDays(state, state.numberOfMonths, startDate.getTime(), state.end);
       }
@@ -228,10 +238,24 @@ function selectDay(state: CalendarState, date: number): CalendarState {
   if (!state.selectedDates.has(date)) {
     const dates = new Set<number>(state.selectedDates);
     dates.add(date);
-    console.log('selectDay', dates)
+    log('selectDay', dates)
     return { ...state, selectedDates: dates };
   }
   return state;
+}
+
+const getSelectedDatesInRange = (startDate: number, endDate: number, selectedDates: number[]) => {
+  const datesInRange = [];
+  for (const selectedDate of selectedDates) {
+    if (selectedDate >= startDate && selectedDate <= endDate) {
+      datesInRange.push(selectedDate);
+    }
+  }
+  return datesInRange;
+}
+
+const log = (key: string, text?: any) => {
+  //console.log(key, text)
 }
 
 export const dayHovered = (state: CalendarState, date: number): boolean => state.hovered.has(date) || false;

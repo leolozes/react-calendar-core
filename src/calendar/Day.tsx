@@ -1,20 +1,15 @@
 import React from "react";
 
-import { Status, Events } from './constants';
+import { DayProps, DayStatus, DayEvents } from './types';
 
 import { dayHovered, dayInvalid, daySelected, isFirstSelectedDay, isLastSelectedDay, CalendarMode, DragAction, useCalendarStore } from "./state";
 
-export interface Props {
-  date: number;
-  renderDay?: (date: number, status: Status, events: Events) => React.ReactNode;
-}
-
-function Day(props: Props) {
-  const { date, renderDay } = props;
+function Day(props: DayProps) {
+  const { date, DayComponent } = props;
 
   const state = useCalendarStore()
 
-  const status: Status = {
+  const status: DayStatus = {
     disabled: dayInvalid(state, date),
     hovered: dayHovered(state, date),
     selected: daySelected(state, date),
@@ -58,15 +53,15 @@ function Day(props: Props) {
     state.onMouseUp();
   };
 
-  const events: Events = {
+  const events: DayEvents = {
     onMouseDownCapture: handleOnMouseDown,
     onMouseEnter: handleOnMouseEnter,
     onMouseOver: state.mode === CalendarMode.DESKTOP ? handleOnHover : undefined,
     onMouseUpCapture: handleOnMouseUp,
   }
 
-  if (renderDay) {
-    return <>{renderDay(date, status, events)}</>
+  if (DayComponent) {
+    return <DayComponent date={date} status={status} events={events} />
   }
 
   return (

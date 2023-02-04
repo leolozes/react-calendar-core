@@ -1,7 +1,5 @@
-import Calendar, { WeekStartsOn, Events, Status } from './calendar';
+import Calendar, { types } from './calendar';
 
 export default Calendar;
 
-export { WeekStartsOn }
-
-export type { Events, Status }
+export { types };

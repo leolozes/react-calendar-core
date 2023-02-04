@@ -1,41 +1,37 @@
 import React from "react";
 
-import { addMonths } from "date-fns";
+import { addDays, addMonths, startOfMonth } from "date-fns";
 
-import { Events, Status, WeekStartsOn } from "./constants";
+import * as types from './types';
 
 import Months from "./Months";
 
 import { useCalendarStore } from "./state";
 
-export interface Props {
-  disabledDates?: number[] | null | undefined;
-  endDate?: number | undefined;
-  locale: string;
-  numberOfMonths: number;
-  selectedDates?: number[] | null | undefined;
-  startDate: number;
-  weekStartsOn: WeekStartsOn;
-  onChange?: (dates: number[]) => void;
-  renderCalendarContainer?: (month: number, year: number, calendar: JSX.Element) => JSX.Element;
-  renderDay?: (day: number, status: Status, events: Events) => JSX.Element;
-  renderMonthHeader?: (month: number, year: number) => JSX.Element;
-  renderWeekDay?: (weekDay: number) => JSX.Element;
-}
-
-function Calendar(props: Props) {
+function Calendar(props: types.CalendarProps) {
   const state = useCalendarStore();
 
   React.useEffect(() => {
+    const endDate = addDays(addMonths(new Date(startOfMonth(props.startDate)), props.numberOfMonths).getTime(), -1).getTime();
     state.setStart(props.startDate);
-    state.setEnd(addMonths(new Date(props.startDate), props.numberOfMonths - 1).getTime());
+    state.setEnd(endDate);
+    state.setAllowPreviousNavigation(props.allowPreviousNavigation ?? true);
+
+    console.log('start', new Date(props.startDate));
+    console.log('end', new Date(endDate));
 
     if (props.selectedDates) {
       state.setSelectedDates(props.selectedDates);
     } else {
       state.clearSelectedDates();
     }
-  }, [props.startDate, props.numberOfMonths, props.selectedDates]);
+  }, [props.allowPreviousNavigation, props.numberOfMonths, props.selectedDates, props.startDate,]);
+
+  React.useEffect(() => {
+    if (props.onChange) {
+      props.onChange(Array.from(state.selectedDates).sort());
+    }
+  }, [state.selectedDates]);
 
   return (
     <>
@@ -46,6 +42,4 @@ function Calendar(props: Props) {
 
 export default Calendar;
 
-export { WeekStartsOn }
-
-export type { Events, Status }
+export { types };

@@ -4,21 +4,13 @@ import { addMonths, startOfMonth } from "date-fns";
 
 import { useCalendarStore } from "./state";
 
-import { Events, Status, WeekStartsOn } from "./constants";
+import { MonthsProps } from "./types";
 
 import Month from "./Month";
 
-export interface Props {
-  isMobile?: boolean;
-  locale: string;
-  weekStartsOn: WeekStartsOn;
-  renderCalendarContainer?: (month: number, year: number, calendar: JSX.Element) => JSX.Element;
-  renderDay?: (day: number, status: Status, events: Events) => JSX.Element;
-  renderMonthHeader?: (month: number, year: number) => JSX.Element;
-  renderWeekDay?: (weekDay: number) => JSX.Element;
-}
+function Months(props: MonthsProps) {
+  const { CalendarContainerComponent } = props;
 
-function Months(props: Props) {
   const state = useCalendarStore();
   const firstMonth = startOfMonth(state.start);
 
@@ -36,8 +28,12 @@ function Months(props: Props) {
               startDate={startDate.getTime()}
             />
           );
-          return props.renderCalendarContainer
-            ? props.renderCalendarContainer(startDate.getMonth(), startDate.getFullYear(), month)
+          return CalendarContainerComponent
+            ? <CalendarContainerComponent
+                month={startDate.getMonth()}
+                year={startDate.getFullYear()}
+                children={month}
+              />
             : month
         })
     }
