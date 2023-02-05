@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { addMonths } from 'date-fns'
+import { addMonths, startOfMonth } from 'date-fns'
 import { ChevronDoubleLeftIcon } from '@heroicons/react/24/solid';
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/solid';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
@@ -29,10 +29,10 @@ export default function (props: Props) {
         {
           props.isFirst &&
           <>
-            <button disabled={disabled} className="p-2" onClick={() => props.setStartDate(addMonths(props.startDate, -12).getTime())}>
+            <button disabled={disabled} className="p-2" onClick={() => props.setStartDate(addMonths(startOfMonth(props.startDate), -12).getTime())}>
               <ChevronDoubleLeftIcon className={disabled ? disabledClassName : className} />
             </button>
-            <button disabled={disabled} className="p-2" onClick={() => props.setStartDate(addMonths(props.startDate, -1).getTime())}>
+            <button disabled={disabled} className="p-2" onClick={() => props.setStartDate(addMonths(startOfMonth(props.startDate), -1).getTime())}>
               <ChevronLeftIcon className={disabled ? disabledClassName : className} />
             </button>
           </>
@@ -45,10 +45,10 @@ export default function (props: Props) {
         {
           props.isLast &&
           <>
-            <button className="p-2" onClick={() => props.setStartDate(addMonths(props.startDate, 1).getTime())}>
+            <button className="p-2" onClick={() => props.setStartDate(addMonths(startOfMonth(props.startDate), 1).getTime())}>
               <ChevronRightIcon className={className} />
             </button>
-            <button className="p-2" onClick={() => props.setStartDate(addMonths(props.startDate, 12).getTime())}>
+            <button className="p-2" onClick={() => props.setStartDate(addMonths(startOfMonth(props.startDate), 12).getTime())}>
               <ChevronDoubleRightIcon className={className} />
             </button>
           </>

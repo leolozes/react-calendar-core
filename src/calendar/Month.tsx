@@ -4,7 +4,8 @@ import { addDays, differenceInWeeks, endOfMonth, endOfWeek, startOfMonth, startO
 
 import { MonthProps } from "./types";
 
-import { isFirstSelectedDay, useCalendarStore } from "./state";
+import { useCalendarStore } from "./state";
+import { isFirstSelectedDay } from "./stateLogic";
 
 import Day from "./Day";
 
@@ -82,7 +83,9 @@ function Month(props: MonthProps) {
             .fill(1)
             .map((week, weekIdx) =>
               <tr key={`W${weekIdx + 1}`}>
-                {Array(7).fill(1).map((day, dayIdx) => getDay(weekIdx, dayIdx))}
+                {Array(7).fill(1).map((day, dayIdx) => {
+                  return getDay(weekIdx, dayIdx)
+                })}
               </tr>
             )}
         </tbody>

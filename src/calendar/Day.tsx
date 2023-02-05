@@ -1,8 +1,10 @@
 import React from "react";
 
-import { DayProps, DayStatus, DayEvents } from './types';
+import { CalendarMode, DayProps, DayStatus, DayEvents, DragAction } from './types';
 
-import { dayHovered, dayInvalid, daySelected, isFirstSelectedDay, isLastSelectedDay, CalendarMode, DragAction, useCalendarStore } from "./state";
+import { useCalendarStore } from "./state";
+
+import { dayHovered, dayInvalid, daySelected, isFirstSelectedDay, isLastSelectedDay } from "./stateLogic";
 
 function Day(props: DayProps) {
   const { date, DayComponent } = props;
@@ -37,7 +39,7 @@ function Day(props: DayProps) {
     event.preventDefault();
     event.stopPropagation();
     if (!status.disabled) {
-      if (state.dragAction != DragAction.NONE) {
+      if (state.dragAction !== DragAction.None) {
         if (event.buttons) {
           state.onMouseEnter(date);
         } else {
@@ -56,7 +58,7 @@ function Day(props: DayProps) {
   const events: DayEvents = {
     onMouseDownCapture: handleOnMouseDown,
     onMouseEnter: handleOnMouseEnter,
-    onMouseOver: state.mode === CalendarMode.DESKTOP ? handleOnHover : undefined,
+    onMouseOver: state.mode === CalendarMode.Desktop ? handleOnHover : undefined,
     onMouseUpCapture: handleOnMouseUp,
   }
 

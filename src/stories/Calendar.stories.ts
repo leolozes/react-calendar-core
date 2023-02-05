@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import Calendar from './Calendar';
+import Calendar from "./Calendar";
+import { types } from "../calendar";
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/react/writing-stories/introduction
 const meta = {
@@ -12,6 +13,10 @@ const meta = {
       options: ['row', 'column'],
       control: { type: 'radio' },
     },
+    dragAction: {
+      options: [...Object.values(types.DragAction)],
+      control: { type: 'select' },
+    }
   },
 } satisfies Meta<typeof Calendar>;
 
@@ -22,6 +27,9 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     allowPreviousNavigation: true,
+    allowPreviousSelection: false,
+    allowRangeSelection: false,
+    dragAction: types.DragAction.Add,
     numberOfMonths: 1,
     orientation: "column",
     styled: true,
@@ -32,6 +40,9 @@ export const Primary: Story = {
 export const Secondary: Story = {
   args: {
     allowPreviousNavigation: false,
+    allowPreviousSelection: false,
+    allowRangeSelection: true,
+    dragAction: types.DragAction.None,
     numberOfMonths: 2,
     orientation: "column",
     styled: true,

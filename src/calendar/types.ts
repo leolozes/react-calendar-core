@@ -1,3 +1,14 @@
+export enum CalendarMode {
+  Desktop = 'Desktop',
+  Mobile = 'Mobile'
+}
+
+export enum DragAction {
+  None = "None",
+  Add = "Add",
+  Clear = "Clear",
+}
+
 export enum WeekStartsOn {
   Monday = 1,
   Sunday = 0,
@@ -6,7 +17,10 @@ export enum WeekStartsOn {
 
 export interface CalendarProps extends MonthsProps {
   allowPreviousNavigation?: boolean;
+  allowRangeSelection?: boolean;
+  allowPreviousSelection?: boolean;
   disabledDates?: number[] | null | undefined;
+  dragAction?: DragAction;
   endDate?: number | undefined;
   numberOfMonths: number;
   selectedDates?: number[] | null | undefined;

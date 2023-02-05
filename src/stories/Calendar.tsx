@@ -13,6 +13,9 @@ function getLocale() {
 
 export interface Props {
   allowPreviousNavigation: boolean;
+  allowPreviousSelection: boolean;
+  allowRangeSelection: boolean;
+  dragAction: types.DragAction;
   numberOfMonths?: number;
   orientation?: "row" | "column";
   styled: boolean;
@@ -29,14 +32,6 @@ export default function Demo (props: Props) {
     setMonths(props.numberOfMonths ?? 1);
   }, [props.numberOfMonths]);
 
-  const renderWeekDay = (date: number) => {
-    return (
-      <div className={`flex items-center justify-center h-10 text-slate-400`}>
-        {new Date(date).toLocaleString(locale, { weekday: 'narrow' })}
-      </div>
-    );
-  }
-
   const onChange = (dates: number[]): void => {
     setDates(dates);
   }
@@ -45,7 +40,7 @@ export default function Demo (props: Props) {
     <div style={{ width: props.width ?? 500 }}>
       <div className={`flex ${props.orientation === "column" ? "flex-col" : "flex-row"}`}>
         <Calendar
-          allowPreviousNavigation={props.allowPreviousNavigation}
+          {...props}
           locale={locale}
           numberOfMonths={months}
           selectedDates={dates}

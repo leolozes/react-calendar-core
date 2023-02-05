@@ -12,16 +12,30 @@ function Calendar(props: types.CalendarProps) {
   const state = useCalendarStore();
 
   React.useEffect(() => {
-    const endDate = addDays(addMonths(new Date(startOfMonth(props.startDate)), props.numberOfMonths).getTime(), -1).getTime();
-    state.setStart(props.startDate);
+    const startOf = startOfMonth(props.startDate);
+    const endDate = addDays(addMonths(startOf, props.numberOfMonths).getTime(), -1).getTime();
+    state.setAllowPreviousSelection(props.allowPreviousSelection ?? true);
+    state.setStart(props.allowPreviousSelection ? startOf.getTime() : props.startDate);
     state.setEnd(endDate);
-    state.setAllowPreviousNavigation(props.allowPreviousNavigation ?? true);
+
     if (props.selectedDates) {
       state.setSelectedDates(props.selectedDates);
     } else {
       state.clearSelectedDates();
     }
-  }, [props.allowPreviousNavigation, props.numberOfMonths, props.selectedDates, props.startDate,]);
+  }, [props.allowPreviousSelection, props.numberOfMonths, props.selectedDates, props.startDate,]);
+
+  React.useEffect(() => {
+    state.setAllowPreviousNavigation(props.allowPreviousNavigation ?? true);
+  }, [props.allowPreviousNavigation]);
+
+  React.useEffect(() => {
+    state.setAllowRangeSelection(props.allowRangeSelection ?? true);
+  }, [props.allowRangeSelection]);
+
+  React.useEffect(() => {
+    state.setDragAction(props.dragAction ?? types.DragAction.None);
+  }, [props.dragAction]);
 
   React.useEffect(() => {
     if (props.onChange) {
