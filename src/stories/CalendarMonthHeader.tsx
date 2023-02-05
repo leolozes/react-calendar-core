@@ -9,8 +9,6 @@ import { types } from '../calendar'
 export interface Props extends types.CustomMonthHeaderProps {
   allowPreviousNavigation: boolean;
   locale: string;
-  startDate: number;
-  setStartDate: Dispatch<SetStateAction<number>>
 }
 
 export default function (props: Props) {
@@ -29,10 +27,10 @@ export default function (props: Props) {
         {
           props.isFirst &&
           <>
-            <button disabled={disabled} className="p-2" onClick={() => props.setStartDate(addMonths(startOfMonth(props.startDate), -12).getTime())}>
+            <button disabled={disabled} className="p-2" onClick={() => props.previousYear()}>
               <ChevronDoubleLeftIcon className={disabled ? disabledClassName : className} />
             </button>
-            <button disabled={disabled} className="p-2" onClick={() => props.setStartDate(addMonths(startOfMonth(props.startDate), -1).getTime())}>
+            <button disabled={disabled} className="p-2" onClick={() => props.previousMonth()}>
               <ChevronLeftIcon className={disabled ? disabledClassName : className} />
             </button>
           </>
@@ -45,10 +43,10 @@ export default function (props: Props) {
         {
           props.isLast &&
           <>
-            <button className="p-2" onClick={() => props.setStartDate(addMonths(startOfMonth(props.startDate), 1).getTime())}>
+            <button className="p-2" onClick={() => props.nextMonth()}>
               <ChevronRightIcon className={className} />
             </button>
-            <button className="p-2" onClick={() => props.setStartDate(addMonths(startOfMonth(props.startDate), 12).getTime())}>
+            <button className="p-2" onClick={() => props.nextYear()}>
               <ChevronDoubleRightIcon className={className} />
             </button>
           </>

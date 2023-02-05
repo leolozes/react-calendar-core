@@ -13,18 +13,18 @@ function getLocale() {
 
 export interface Props {
   allowPreviousNavigation: boolean;
-  allowPreviousSelection: boolean;
+  allowPreviousSelection: types.AllowPreviousSelection;
   allowRangeSelection: boolean;
   dragAction: types.DragAction;
   numberOfMonths?: number;
   orientation?: "row" | "column";
+  startDate: number;
   styled: boolean;
   width?: number | string;
 }
 
 export default function Demo (props: Props) {
   const [months, setMonths] = useState(0);
-  const [startDate, setStartDate] = useState(Date.now());
   const [dates, setDates] = useState<number[]>([]);
   const locale = getLocale();
 
@@ -43,8 +43,8 @@ export default function Demo (props: Props) {
           {...props}
           locale={locale}
           numberOfMonths={months}
-          selectedDates={dates}
-          startDate={startDate}
+          selectedDates={undefined}
+          startDate={props.startDate}
           weekStartsOn={types.WeekStartsOn.Monday}
           onChange={onChange}
           CalendarContainerComponent={
@@ -64,8 +64,6 @@ export default function Demo (props: Props) {
                     {...montHeaderProps}
                     allowPreviousNavigation={props.allowPreviousNavigation}
                     locale={locale}
-                    startDate={startDate}
-                    setStartDate={setStartDate}
                   />
               : undefined
           }

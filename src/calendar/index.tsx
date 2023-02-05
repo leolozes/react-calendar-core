@@ -1,6 +1,6 @@
 import React from "react";
 
-import { addDays, addMonths, startOfMonth } from "date-fns";
+import { addDays, addMonths, startOfDay, startOfMonth } from "date-fns";
 
 import * as types from './types';
 
@@ -14,16 +14,11 @@ function Calendar(props: types.CalendarProps) {
   React.useEffect(() => {
     const startOf = startOfMonth(props.startDate);
     const endDate = addDays(addMonths(startOf, props.numberOfMonths).getTime(), -1).getTime();
-    state.setAllowPreviousSelection(props.allowPreviousSelection ?? true);
+    state.setAllowPreviousSelection(props.allowPreviousSelection ?? types.AllowPreviousSelection.All);
     state.setStart(props.allowPreviousSelection ? startOf.getTime() : props.startDate);
+    state.setStartByUser(startOfDay(props.startDate).getTime());
     state.setEnd(endDate);
-
-    if (props.selectedDates) {
-      state.setSelectedDates(props.selectedDates);
-    } else {
-      state.clearSelectedDates();
-    }
-  }, [props.allowPreviousSelection, props.numberOfMonths, props.selectedDates, props.startDate,]);
+  }, [props.allowPreviousSelection, props.numberOfMonths, props.startDate]);
 
   React.useEffect(() => {
     state.setAllowPreviousNavigation(props.allowPreviousNavigation ?? true);

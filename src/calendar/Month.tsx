@@ -67,6 +67,10 @@ function Month(props: MonthProps) {
             year={startMonth.getFullYear()}
             isFirst={new Date(state.start).getMonth() === startMonth.getMonth()}
             isLast={new Date(state.end).getMonth() === startMonth.getMonth()}
+            nextMonth={() => state.goToNextMonth()}
+            nextYear={() => state.goToNextYear()}
+            previousMonth={() => state.goToPreviousMonth()}
+            previousYear={() => state.goToPreviousYear()}
           />
         : <div>
             {`${startMonth.toLocaleString(props.locale, { month: 'long' })} ${startMonth.getFullYear()}`}
