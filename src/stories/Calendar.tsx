@@ -13,8 +13,9 @@ function getLocale() {
 
 export interface Props {
   allowPreviousNavigation: boolean;
-  allowPreviousSelection: types.AllowPreviousSelection;
+  allowPreviousSelection: types.AllowPrevious;
   allowRangeSelection: boolean;
+  callOnChangeOnPartialRange: boolean;
   dragAction: types.DragAction;
   numberOfMonths?: number;
   orientation?: "row" | "column";

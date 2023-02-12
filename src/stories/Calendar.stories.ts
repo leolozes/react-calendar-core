@@ -11,8 +11,12 @@ const meta = {
   component: Calendar,
   tags: ['autodocs'],
   argTypes: {
+    allowPreviousNavigation: {
+      options: [...Object.values(types.AllowPrevious)],
+      control: { type: 'select' },
+    },
     allowPreviousSelection: {
-      options: [...Object.values(types.AllowPreviousSelection)],
+      options: [...Object.values(types.AllowPrevious)],
       control: { type: 'select' },
     },
     orientation: {
@@ -36,8 +40,9 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     allowPreviousNavigation: true,
-    allowPreviousSelection: types.AllowPreviousSelection.AfterToday,
+    allowPreviousSelection: types.AllowPrevious.AfterToday,
     allowRangeSelection: false,
+    callOnChangeOnPartialRange: false,
     dragAction: types.DragAction.Add,
     numberOfMonths: 1,
     orientation: "column",
@@ -50,8 +55,9 @@ export const Primary: Story = {
 export const Secondary: Story = {
   args: {
     allowPreviousNavigation: false,
-    allowPreviousSelection: types.AllowPreviousSelection.AfterStartDate,
+    allowPreviousSelection: types.AllowPrevious.AfterStartDate,
     allowRangeSelection: true,
+    callOnChangeOnPartialRange: false,
     dragAction: types.DragAction.None,
     numberOfMonths: 2,
     orientation: "column",

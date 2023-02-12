@@ -1,7 +1,7 @@
 import { addDays, addMonths, differenceInMonths, isAfter, isBefore, isSameDay, startOfDay } from "date-fns";
 import { startOfMonth } from "date-fns/esm";
 
-import { AllowPreviousSelection, DragAction } from "./types";
+import { AllowPrevious, DragAction } from "./types";
 
 import { CalendarState } from './state';
 
@@ -165,7 +165,7 @@ export const setStart = (date: number, state: CalendarState, force?: boolean,): 
   let startDate = startOfDay(date);
   log('setStart', startDate);
 
-  if (!state.allowPreviousNavigation) {
+  if (!state.allowPreviousNavigation || state.allowPreviousSelection === AllowPrevious.AfterToday) {
     const today = startOfDay(new Date());
     if (isBefore(startDate, today)) {
       startDate = today;
@@ -215,8 +215,8 @@ function getDaysBetween(startDate: number, endDate: number): Set<number> {
 }
 
 const getDisabledDates = (startDate: number, state: CalendarState) => {
-  if (state.allowPreviousSelection !== AllowPreviousSelection.All) {
-    const date = state.allowPreviousSelection === AllowPreviousSelection.AfterToday
+  if (state.allowPreviousSelection !== AllowPrevious.All) {
+    const date = state.allowPreviousSelection === AllowPrevious.AfterToday
       ? addDays(Date.now(), -1).getTime()
       : state.startByUser;
     return new Set<number>([...state.disabledByUser, ...getDaysBetween(startOfMonth(startDate).getTime(), date)]);

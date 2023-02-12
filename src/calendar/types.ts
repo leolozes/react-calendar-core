@@ -9,7 +9,7 @@ export enum DragAction {
   Clear = "Clear",
 }
 
-export enum AllowPreviousSelection {
+export enum AllowPrevious {
   AfterToday = "AfterToday",
   AfterStartDate = "AfterStartDate",
   All = "All"
@@ -23,9 +23,10 @@ export enum WeekStartsOn {
 
 export interface CalendarProps extends MonthsProps {
   allowPreviousNavigation?: boolean;
+  allowPreviousSelection?: AllowPrevious;
   allowRangeSelection?: boolean;
-  allowPreviousSelection?: AllowPreviousSelection;
-  disabledDates?: number[] | null | undefined;
+  callOnChangeOnPartialRange?: boolean;
+  disabledDates?: number[];
   dragAction?: DragAction;
   endDate?: number | undefined;
   numberOfMonths: number;

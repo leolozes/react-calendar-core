@@ -12,21 +12,33 @@ function Calendar(props: types.CalendarProps) {
   const state = useCalendarStore();
 
   React.useEffect(() => {
-    const startOf = startOfMonth(props.startDate);
+    state.setStart(props.startDate);
+    state.setStartByUser(props.startDate);
+  }, [props.numberOfMonths, props.startDate]);
+
+  React.useEffect(() => {
+    const startOf = startOfMonth(state.start);
     const endDate = addDays(addMonths(startOf, props.numberOfMonths).getTime(), -1).getTime();
-    state.setAllowPreviousSelection(props.allowPreviousSelection ?? types.AllowPreviousSelection.All);
-    state.setStart(props.allowPreviousSelection ? startOf.getTime() : props.startDate);
-    state.setStartByUser(startOfDay(props.startDate).getTime());
     state.setEnd(endDate);
-  }, [props.allowPreviousSelection, props.numberOfMonths, props.startDate]);
+  }, [props.numberOfMonths]);
 
   React.useEffect(() => {
     state.setAllowPreviousNavigation(props.allowPreviousNavigation ?? true);
   }, [props.allowPreviousNavigation]);
 
   React.useEffect(() => {
+    const startOf = startOfMonth(state.startByUser);
+    state.setAllowPreviousSelection(props.allowPreviousSelection ?? types.AllowPrevious.All);
+    state.setStart(props.allowPreviousSelection ? startOf.getTime() : state.startByUser);
+  }, [props.allowPreviousSelection]);
+
+  React.useEffect(() => {
     state.setAllowRangeSelection(props.allowRangeSelection ?? true);
   }, [props.allowRangeSelection]);
+
+  React.useEffect(() => {
+    state.setCallOnChangeOnPartialRange(props.callOnChangeOnPartialRange ?? true);
+  }, [props.callOnChangeOnPartialRange]);
 
   React.useEffect(() => {
     state.setDragAction(props.dragAction ?? types.DragAction.None);
@@ -34,7 +46,13 @@ function Calendar(props: types.CalendarProps) {
 
   React.useEffect(() => {
     if (props.onChange) {
-      props.onChange(Array.from(state.selectedDates).sort());
+      if (state.allowRangeSelection && !state.callOnChangeOnPartialRange) {
+        if (state.selectedDates.size > 1) {
+          props.onChange(Array.from(state.selectedDates).sort());
+        }
+      } else {
+        props.onChange(Array.from(state.selectedDates).sort());
+      }
     }
   }, [state.selectedDates]);
 
