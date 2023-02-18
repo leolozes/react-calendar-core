@@ -11,12 +11,12 @@ const meta = {
   component: Calendar,
   tags: ['autodocs'],
   argTypes: {
-    allowPreviousNavigation: {
-      options: [...Object.values(types.AllowPrevious)],
+    allowNavigation: {
+      options: [...Object.values(types.AllowNavigation)],
       control: { type: 'select' },
     },
-    allowPreviousSelection: {
-      options: [...Object.values(types.AllowPrevious)],
+    allowSelection: {
+      options: [...Object.values(types.AllowSelection)],
       control: { type: 'select' },
     },
     orientation: {
@@ -39,8 +39,8 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/7.0/react/writing-stories/args
 export const Primary: Story = {
   args: {
-    allowPreviousNavigation: true,
-    allowPreviousSelection: types.AllowPrevious.AfterToday,
+    allowNavigation: types.AllowNavigation.All,
+    allowSelection: types.AllowSelection.All,
     allowRangeSelection: false,
     callOnChangeOnPartialRange: false,
     dragAction: types.DragAction.Add,
@@ -54,14 +54,15 @@ export const Primary: Story = {
 
 export const Secondary: Story = {
   args: {
-    allowPreviousNavigation: false,
-    allowPreviousSelection: types.AllowPrevious.AfterStartDate,
+    allowNavigation: types.AllowNavigation.All,
+    allowSelection: types.AllowSelection.BetweenStartAndEnd,
     allowRangeSelection: true,
     callOnChangeOnPartialRange: false,
     dragAction: types.DragAction.None,
+    endDate: addDays(Date.now(), 35).getTime(),
     numberOfMonths: 2,
     orientation: "column",
-    startDate: addDays(Date.now(), 15).getTime(),
+    startDate: addDays(Date.now(), 5).getTime(),
     styled: true,
     width: 500
   },

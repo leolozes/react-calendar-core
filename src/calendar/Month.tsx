@@ -5,7 +5,7 @@ import { addDays, differenceInWeeks, endOfMonth, endOfWeek, startOfMonth, startO
 import { MonthProps } from "./types";
 
 import { useCalendarStore } from "./state";
-import { isFirstSelectedDay } from "./stateLogic";
+import { isFirstSelectedDay, nextNavigationDisabled, previousNavigationDisabled } from "./stateLogic";
 
 import Day from "./Day";
 
@@ -67,6 +67,10 @@ function Month(props: MonthProps) {
             year={startMonth.getFullYear()}
             isFirst={new Date(state.start).getMonth() === startMonth.getMonth()}
             isLast={new Date(state.end).getMonth() === startMonth.getMonth()}
+            disabledNavigation={{
+              previous: previousNavigationDisabled(state, startMonth.getTime()),
+              next: nextNavigationDisabled(state, endMonth.getTime()),
+            }}
             nextMonth={() => state.goToNextMonth()}
             nextYear={() => state.goToNextYear()}
             previousMonth={() => state.goToPreviousMonth()}

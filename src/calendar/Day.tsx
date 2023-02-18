@@ -4,7 +4,7 @@ import { CalendarMode, DayProps, DayStatus, DayEvents, DragAction } from './type
 
 import { useCalendarStore } from "./state";
 
-import { dayHovered, dayInvalid, daySelected, isFirstSelectedDay, isLastSelectedDay } from "./stateLogic";
+import { dayHovered, dayDisabled, daySelected, isFirstSelectedDay, isLastSelectedDay } from "./stateLogic";
 
 function Day(props: DayProps) {
   const { date, DayComponent } = props;
@@ -12,7 +12,7 @@ function Day(props: DayProps) {
   const state = useCalendarStore()
 
   const status: DayStatus = {
-    disabled: dayInvalid(state, date),
+    disabled: dayDisabled(state, date),
     hovered: dayHovered(state, date),
     selected: daySelected(state, date),
     firstSelected: isFirstSelectedDay(state, date),

@@ -1,7 +1,7 @@
 import { addDays, addMonths, differenceInMonths, isAfter, isBefore, isSameDay, startOfDay } from "date-fns";
 import { startOfMonth } from "date-fns/esm";
 
-import { AllowPrevious, DragAction } from "./types";
+import { AllowNavigation, AllowSelection, DragAction } from "./types";
 
 import { CalendarState } from './state';
 
@@ -135,10 +135,9 @@ export const setDisabled = (dates: number[], state: CalendarState): CalendarStat
 export const setEnd = (date: number, state: CalendarState): CalendarState => {
   log('setEnd', date);
   let endDate = startOfDay(date);
-  if (!state.allowPreviousNavigation) {
-    const today = startOfDay(new Date());
-    if (isBefore(endDate, today)) {
-      endDate = today;
+  if (state.allowSelection === AllowSelection.BetweenStartAndEnd && state.endByUser) {
+    if (isBefore(endDate, state.endByUser)) {
+      endDate = startOfDay(state.endByUser);
     }
   }
   if (!state.end || !isSameDay(endDate, state.end)) {
@@ -165,10 +164,9 @@ export const setStart = (date: number, state: CalendarState, force?: boolean,): 
   let startDate = startOfDay(date);
   log('setStart', startDate);
 
-  if (!state.allowPreviousNavigation || state.allowPreviousSelection === AllowPrevious.AfterToday) {
-    const today = startOfDay(new Date());
-    if (isBefore(startDate, today)) {
-      startDate = today;
+  if (state.allowSelection === AllowSelection.BetweenStartAndEnd) {
+    if (isBefore(startDate, state.startByUser)) {
+      startDate = startOfDay(state.startByUser);
     }
   }
 
@@ -190,15 +188,13 @@ function filterDays(state: CalendarState, numberOfMonths: number, startDate: num
   const newEndDate = endDate ? new Date(endDate) : addDays(addMonths(newStartDate, numberOfMonths), -1);
   const newNumberOfMonths = differenceInMonths(startOfMonth(newEndDate), startOfMonth(newStartDate)) + 1;
   const dates = Array.from(state.selectedDates).filter((date) => !isBefore(date, newStartDate) && !isAfter(date, newEndDate));
-  const disabledDates = getDisabledDates(newStartDate.getTime(), state);
 
-  log('filterDays', newStartDate.getTime(), newEndDate.getTime(), dates, state.selectedDates);
+  log('filterDays', newStartDate, newEndDate, dates, state.selectedDates);
 
   const selectedState = (dates.length !== state.selectedDates.size) ? selectDates(state, dates) : state;
 
   return {
     ...selectedState,
-    disabled: disabledDates,
     end: newEndDate.getTime(),
     numberOfMonths: newNumberOfMonths,
     start: newStartDate.getTime(),
@@ -212,16 +208,6 @@ function getDaysBetween(startDate: number, endDate: number): Set<number> {
     days.add(dateNumber);
   }
   return days;
-}
-
-const getDisabledDates = (startDate: number, state: CalendarState) => {
-  if (state.allowPreviousSelection !== AllowPrevious.All) {
-    const date = state.allowPreviousSelection === AllowPrevious.AfterToday
-      ? addDays(Date.now(), -1).getTime()
-      : state.startByUser;
-    return new Set<number>([...state.disabledByUser, ...getDaysBetween(startOfMonth(startDate).getTime(), date)]);
-  }
-  return state.disabledByUser;
 }
 
 const getSelectedDatesInRange = (startDate: number, endDate: number, selectedDates: number[]): number[] => {
@@ -254,8 +240,27 @@ function selectDates(state: CalendarState, dates: number[]): CalendarState {
   };
 }
 
+export const previousNavigationDisabled = (state: CalendarState, firstDayOfMonth: number): boolean => {
+  if (state.allowNavigation === AllowNavigation.All) return false;
+  const date = addDays(firstDayOfMonth, -1).getTime();
+  return (date < state.startByUser);
+}
+
+export const nextNavigationDisabled = (state: CalendarState, lastDayOfMonth: number): boolean => {
+  if (state.allowNavigation === AllowNavigation.All) return false;
+  const date = addDays(lastDayOfMonth, 1).getTime();
+  return (state.endByUser ? date >= state.endByUser : false);
+}
+
+export const dayDisabled = (state: CalendarState, date: number): boolean => {
+  if (state.disabled.has(date)) return true;
+  if (state.allowSelection === AllowSelection.BetweenStartAndEnd) {
+    return (date < state.startByUser) || (state.endByUser ? date >= state.endByUser : false)
+  }
+  return false;
+}
+
 export const dayHovered = (state: CalendarState, date: number): boolean => state.hovered.has(date) || false;
-export const dayInvalid = (state: CalendarState, date: number): boolean => state.disabled.has(date) || false;
 export const daySelected = (state: CalendarState, date: number): boolean => state.selectedDates.has(date) || false;
 export const isFirstSelectedDay = (state: CalendarState, date: number): boolean => state.selectedFrom === date || false;
 export const isLastSelectedDay = (state: CalendarState, date: number): boolean => state.selectedTo === date || false;

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { addDays, addMonths, startOfDay, startOfMonth } from "date-fns";
+import { addDays, addMonths, startOfMonth } from "date-fns";
 
 import * as types from './types';
 
@@ -14,7 +14,11 @@ function Calendar(props: types.CalendarProps) {
   React.useEffect(() => {
     state.setStart(props.startDate);
     state.setStartByUser(props.startDate);
-  }, [props.numberOfMonths, props.startDate]);
+  }, [props.startDate]);
+
+  React.useEffect(() => {
+    state.setEndByUser(props.endDate);
+  }, [props.endDate]);
 
   React.useEffect(() => {
     const startOf = startOfMonth(state.start);
@@ -23,14 +27,14 @@ function Calendar(props: types.CalendarProps) {
   }, [props.numberOfMonths]);
 
   React.useEffect(() => {
-    state.setAllowPreviousNavigation(props.allowPreviousNavigation ?? true);
-  }, [props.allowPreviousNavigation]);
+    state.setAllowNavigation(props.allowNavigation ?? types.AllowNavigation.All);
+  }, [props.allowNavigation]);
 
   React.useEffect(() => {
     const startOf = startOfMonth(state.startByUser);
-    state.setAllowPreviousSelection(props.allowPreviousSelection ?? types.AllowPrevious.All);
-    state.setStart(props.allowPreviousSelection ? startOf.getTime() : state.startByUser);
-  }, [props.allowPreviousSelection]);
+    state.setAllowSelection(props.allowSelection ?? types.AllowSelection.All);
+    state.setStart(props.allowSelection ? startOf.getTime() : state.startByUser);
+  }, [props.allowSelection]);
 
   React.useEffect(() => {
     state.setAllowRangeSelection(props.allowRangeSelection ?? true);

@@ -6,7 +6,6 @@ import { ChevronRightIcon } from '@heroicons/react/24/solid';
 import { types } from '../calendar'
 
 export interface Props extends types.CustomMonthHeaderProps {
-  allowPreviousNavigation: boolean;
   locale: string;
 }
 
@@ -17,8 +16,8 @@ export default function (props: Props) {
   const className = "h-4 w-4 text-blue-300";
   const disabledClassName = "h-4 w-4 text-slate-600";
 
-  const today = new Date();
-  const disabled = (!props.allowPreviousNavigation && props.month === today.getMonth() && props.year === today.getFullYear())
+  const disabledPrevious = props.disabledNavigation.previous;
+  const disabledNext = props.disabledNavigation.next;
 
   return (
     <div className="flex items-center justify-between h-10 mb-2 capitalize">
@@ -26,11 +25,11 @@ export default function (props: Props) {
         {
           props.isFirst &&
           <>
-            <button disabled={disabled} className="p-2" onClick={() => props.previousYear()}>
-              <ChevronDoubleLeftIcon className={disabled ? disabledClassName : className} />
+            <button disabled={disabledPrevious} className="p-2" onClick={() => props.previousYear()}>
+              <ChevronDoubleLeftIcon className={disabledPrevious ? disabledClassName : className} />
             </button>
-            <button disabled={disabled} className="p-2" onClick={() => props.previousMonth()}>
-              <ChevronLeftIcon className={disabled ? disabledClassName : className} />
+            <button disabled={disabledPrevious} className="p-2" onClick={() => props.previousMonth()}>
+              <ChevronLeftIcon className={disabledPrevious ? disabledClassName : className} />
             </button>
           </>
         }
@@ -42,11 +41,11 @@ export default function (props: Props) {
         {
           props.isLast &&
           <>
-            <button className="p-2" onClick={() => props.nextMonth()}>
-              <ChevronRightIcon className={className} />
+            <button disabled={disabledNext} className="p-2" onClick={() => props.nextMonth()}>
+              <ChevronRightIcon className={disabledNext ? disabledClassName : className} />
             </button>
-            <button className="p-2" onClick={() => props.nextYear()}>
-              <ChevronDoubleRightIcon className={className} />
+            <button disabled={disabledNext} className="p-2" onClick={() => props.nextYear()}>
+              <ChevronDoubleRightIcon className={disabledNext ? disabledClassName : className} />
             </button>
           </>
         }

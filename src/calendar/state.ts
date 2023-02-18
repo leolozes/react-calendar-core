@@ -2,19 +2,20 @@ import { create } from "zustand";
 import { addMonths, startOfDay, startOfMonth } from "date-fns";
 import { endOfMonth } from "date-fns/esm";
 
-import { AllowPrevious, CalendarMode, DragAction } from "./types";
+import { AllowNavigation, AllowSelection, CalendarMode, DragAction } from "./types";
 import  * as call from './stateLogic';
 
 export interface CalendarState {
-  allowPreviousNavigation: boolean;
+  allowNavigation: AllowNavigation;
   allowRangeSelection: boolean;
-  allowPreviousSelection: AllowPrevious;
+  allowSelection: AllowSelection;
   callOnChangeOnPartialRange: boolean;
   disabled: Set<number>;
   disabledByUser: Set<number>;
   dragAction: DragAction;
   dragActionByUser: DragAction;
   end: number;
+  endByUser: number | undefined;
   hovered: Set<number>;
   mode: CalendarMode;
   numberOfMonths: number;
@@ -32,13 +33,14 @@ export interface CalendarState {
   goToNextYear: () => void;
   goToPreviousMonth: () => void;
   goToPreviousYear: () => void;
-  setAllowPreviousNavigation: (allow: boolean) => void;
-  setAllowPreviousSelection: (allow: AllowPrevious) => void;
+  setAllowNavigation: (allow: AllowNavigation) => void;
   setAllowRangeSelection: (allow: boolean) => void;
+  setAllowSelection: (allow: AllowSelection) => void;
   setCallOnChangeOnPartialRange: (allow: boolean) => void;
   setDisabled: (dates: number[]) => void;
   setDragAction: (action: DragAction) => void;
   setEnd: (date: number) => void;
+  setEndByUser: (date: number | undefined) => void;
   setSelectedDates: (dates: number[]) => void;
   setStart: (date: number) => void;
   setStartByUser: (date: number) => void;
@@ -48,15 +50,16 @@ const today = new Date().getTime();
 
 export const useCalendarStore = create<CalendarState>()(
   (set) => ({
-    allowPreviousNavigation: true,
+    allowNavigation: AllowNavigation.All,
     allowRangeSelection: true,
-    allowPreviousSelection: AllowPrevious.All,
+    allowSelection: AllowSelection.All,
     callOnChangeOnPartialRange: true,
     disabled: new Set<number>(),
     disabledByUser: new Set<number>(),
     dragAction: DragAction.None,
     dragActionByUser: DragAction.None,
     end: endOfMonth(today).getTime(),
+    endByUser: endOfMonth(today).getTime(),
     hovered: new Set<number>(),
     mode: CalendarMode.Desktop,
     numberOfMonths: 1,
@@ -74,13 +77,14 @@ export const useCalendarStore = create<CalendarState>()(
     goToNextYear: () => set((state) => call.setStart(addMonths(startOfMonth(state.start), 12).getTime(), state, true)),
     goToPreviousMonth: () => set((state) => call.setStart(addMonths(startOfMonth(state.start), -1).getTime(), state, true)),
     goToPreviousYear: () => set((state) => call.setStart(addMonths(startOfMonth(state.start), -12).getTime(), state, true)),
-    setAllowPreviousNavigation: (allow: boolean) => set((state) => ({ ...state, allowPreviousNavigation: allow })),
-    setAllowPreviousSelection: (allow: AllowPrevious) => set((state) => ({ ...state, allowPreviousSelection: allow })),
+    setAllowNavigation: (allow: AllowNavigation) => set((state) => ({ ...state, allowNavigation: allow })),
     setAllowRangeSelection: (allow: boolean) => set((state) => ({ ...state, allowRangeSelection: allow })),
+    setAllowSelection: (allow: AllowSelection) => set((state) => ({ ...state, allowSelection: allow })),
     setCallOnChangeOnPartialRange: (allow: boolean) => set((state) => ({ ...state, callOnChangeOnPartialRange: allow })),
     setDisabled: (dates: number[]) => set((state) => call.setDisabled(dates, state)),
     setDragAction: (action: DragAction) => set((state) => ({ ...state, dragAction: action, dragActionByUser: action })),
     setEnd: (date: number) => set((state) => call.setEnd(date, state)),
+    setEndByUser: (date: number | undefined) => set((state) => ({ ...state, endByUser: date ? startOfDay(date).getTime() : undefined })),
     setSelectedDates: (dates: number[]) => set((state) => call.setSelectedDates(dates, state)),
     setStart: (date: number) => set((state) => call.setStart(date, state)),
     setStartByUser: (date: number) => set((state) => ({ ...state, startByUser: startOfDay(date).getTime() })),

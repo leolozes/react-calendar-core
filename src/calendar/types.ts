@@ -9,10 +9,14 @@ export enum DragAction {
   Clear = "Clear",
 }
 
-export enum AllowPrevious {
-  AfterToday = "AfterToday",
-  AfterStartDate = "AfterStartDate",
-  All = "All"
+export enum AllowNavigation {
+  All = "All",
+  BetweenStartAndEnd = "BetweenStartAndEnd",
+}
+
+export enum AllowSelection {
+  All = "All",
+  BetweenStartAndEnd = "BetweenStartAndEnd",
 }
 
 export enum WeekStartsOn {
@@ -22,8 +26,8 @@ export enum WeekStartsOn {
 }
 
 export interface CalendarProps extends MonthsProps {
-  allowPreviousNavigation?: boolean;
-  allowPreviousSelection?: AllowPrevious;
+  allowNavigation?: AllowNavigation;
+  allowSelection?: AllowSelection;
   allowRangeSelection?: boolean;
   callOnChangeOnPartialRange?: boolean;
   disabledDates?: number[];
@@ -84,11 +88,17 @@ export interface CustomDayProps {
   events: DayEvents;
 }
 
+export interface Navigation {
+  previous: boolean;
+  next: boolean;
+}
+
 export interface CustomMonthHeaderProps {
   month: number;
   year: number;
   isFirst: boolean;
   isLast: boolean;
+  disabledNavigation: Navigation;
   nextMonth: () => void;
   nextYear: () => void;
   previousMonth: () => void;

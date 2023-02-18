@@ -14,6 +14,7 @@ function Months(props: MonthsProps) {
   const state = useCalendarStore();
   const firstMonth = startOfMonth(state.start);
 
+  console.log('state.numberOfMonths', state.numberOfMonths)
   return (
     <>
     {
