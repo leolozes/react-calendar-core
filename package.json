@@ -2,15 +2,10 @@
   "homepage": "http://leolozes.github.io/react-calendar-core",
   "name": "@leolozes/react-calendar-core",
   "license": "MIT",
-  "private": false,
   "version": "0.0.1",
   "author": "Leo Lozes <leolozes@gmail.com>",
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/leolozes/react-calendar-core.git"
-  },
-  "publishConfig": {
-    "@leolozes:registry": "https://npm.pkg.github.com/"
+    "url": "https://github.com/leolozes/react-calendar-core.git"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
