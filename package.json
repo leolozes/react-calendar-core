@@ -1,5 +1,5 @@
 {
-  "homepage": "http://LeoLozes.github.io/react-calendar-core",
+  "homepage": "http://leolozes.github.io/react-calendar-core",
   "name": "@leolozes/react-calendar-core",
   "license": "MIT",
   "private": false,
@@ -7,7 +7,7 @@
   "author": "Leo Lozes <leolozes@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LeoLozes/react-calendar-core.git"
+    "url": "git+https://github.com/leolozes/react-calendar-core.git"
   },
   "publishConfig": {
     "@leolozes:registry": "https://npm.pkg.github.com/"
