@@ -37,3 +37,4 @@ The storybook with several diferent demos can be found in the [github page](http
 | startDate | Indicates the start date of the calendar in miliseconds. | _Required prop_ | `1676242800000` |
 | onChange | Function called when a date or range (depending on the value of `allowRangeSelection`) is selected by the user. | _Required prop_ | `(dates: number[]) => alert('selectedDays: ', dates)` |
 
+Project configuration was made following the steps of this video: https://www.youtube.com/watch?v=eh89VE3Mk5g
